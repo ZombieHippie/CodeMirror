@@ -32,7 +32,7 @@
 
 <section id=demo>
   <h2>This is CodeMirror</h2>
-  <form style="position: relative; margin-top: .5em;">
+  <form name="demoform" style="position: relative; margin-top: .5em;">
 <textarea id=demotext>
 awldo
 awdiaowdmno
@@ -48,32 +48,32 @@ wdawd
 wadwaf
 wafaw
 ge
-</textarea></form>
+</textarea>
+<input name="cssContent" type="checkbox" onchange="change()">(CHECKED: Use CSS-Content) / (NOT CHECKED: Use TextNode)</input>
+</form>
   <script>
-    var editor = CodeMirror.fromTextArea(document.getElementById("demotext"), {
-      lineNumbers: true,
-      mode: "text/html",
-      matchBrackets: true,
-      lineNumberFormatter: function (ln) {
-        return ln + (ln % 2 == 0 ? 'e' : 'o');
-      },
-      viewportMargin: Infinity
-    });
-    var count = 1000
-    var inter = setInterval(append_text, 1)
-    var doc = editor.getDoc()
     var text = ""
-    function append_text () {
-      if (count-- < 0) {
-        clearInterval(inter)
-        doc.setValue(text)
-      } else {
-        var pos = {
-          line: doc.lastLine(),
-          ch: 0
-        }
-        var str = '\nherllo ' + count + '\n'
-        text += str //doc.replaceRange(str, pos, pos, '')
-      }
+    var count = 1000
+    while(count--) {
+      //var pos = { line: doc.lastLine(), ch: 0 }
+      var str = '\nherllo ' + count + '\n'
+      text += str //doc.replaceRange(str, pos, pos, '')
     }
+    document.getElementById("demotext").value = text
+    var editor
+    function change () {
+      var useCSSContentLineNumbers = document.forms.demoform["cssContent"].checked
+      if (editor != null) { editor.toTextArea() }
+      editor = CodeMirror.fromTextArea(document.getElementById("demotext"), {
+        lineNumbers: true,
+        lineNumberFormatter: function (ln) {
+          // simple even odd line formatter
+          return ln + (ln % 2 == 0 ? 'e' : 'o');
+        },
+        viewportMargin: Infinity,
+        useCSSContentLineNumbers: useCSSContentLineNumbers
+      });
+      console.log("updated codemirror to use " + (useCSSContentLineNumbers ? "CSS-Content" : "TextNode"))
+    }
+    change()
   </script>
